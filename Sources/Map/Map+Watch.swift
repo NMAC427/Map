@@ -23,7 +23,6 @@ public struct Map<AnnotationItems: RandomAccessCollection> where AnnotationItems
     let informationVisibility: MapInformationVisibility
     let usesUserTrackingMode: Bool
 
-    @available(watchOS 6.1, *)
     @Binding var userTrackingMode: WKInterfaceMap.UserTrackingMode
 
     let annotationItems: AnnotationItems

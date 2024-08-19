@@ -20,6 +20,7 @@ public enum UserTrackingMode {
 
     // MARK: Computed Properties
 
+#if !os(watchOS)
     @available(macOS 11, *)
     var actualValue: MKUserTrackingMode {
         switch self {
@@ -34,5 +35,6 @@ public enum UserTrackingMode {
             
         }
     }
+#endif
 
 }
