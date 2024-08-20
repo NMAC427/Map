@@ -57,6 +57,7 @@ extension Map {
             updateRegion(on: mapView, from: view, to: newView, animated: animated)
             updateType(on: mapView, from: view, to: newView)
             updateUserTracking(on: mapView, from: view, to: newView, animated: animated)
+            updateLegalPosition(on: mapView, from: view, to: newView, animated: animated)
 
             if let key = context.environment.mapKey {
                 MapRegistry[key] = mapView
@@ -246,6 +247,15 @@ extension Map {
                     mapView.setUserTrackingMode(newTrackingMode, animated: animated)
                 }
             }
+        }
+
+        private func updateLegalPosition(on mapView: MKMapView, from previousView: Map?, to newView: Map, animated: Bool) {
+#if canImport(UIKit)
+            guard previousView?.legalPosition != newView.legalPosition else { return }
+            guard let mapView = mapView as? MKMapViewWithCustomLegalPosition else { return }
+
+            mapView.updateLegalPosition(newView.legalPosition)
+#endif
         }
 
         // MARK: MKMapViewDelegate

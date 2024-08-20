@@ -29,6 +29,10 @@ public struct Map<AnnotationItems: RandomAccessCollection, OverlayItems: RandomA
     let usesUserTrackingMode: Bool
     @Binding var userTrackingMode: UserTrackingMode
 
+#if canImport(UIKit) && !os(macOS)
+    let legalPosition: MapLegalPosition
+#endif
+
     let annotationItems: AnnotationItems
     let annotationContent: (AnnotationItems.Element) -> MapAnnotation
     let clusterAnnotation: (MKClusterAnnotation, [AnnotationItems.Element]) -> MapAnnotation?
@@ -184,6 +188,7 @@ extension Map {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotationItems: AnnotationItems,
         @MapAnnotationBuilder annotationContent: @escaping (AnnotationItems.Element) -> MapAnnotation,
         @OptionalMapAnnotationBuilder clusterAnnotation: @escaping (MKClusterAnnotation, [AnnotationItems.Element]) -> MapAnnotation? = { _, _ in nil },
@@ -204,6 +209,7 @@ extension Map {
             self.usesUserTrackingMode = false
             self._userTrackingMode = .constant(.none)
         }
+        self.legalPosition = legalPosition
         self.annotationItems = annotationItems
         self.annotationContent = annotationContent
         self.clusterAnnotation = clusterAnnotation
@@ -218,6 +224,7 @@ extension Map {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotationItems: AnnotationItems,
         @MapAnnotationBuilder annotationContent: @escaping (AnnotationItems.Element) -> MapAnnotation,
         @OptionalMapAnnotationBuilder clusterAnnotation: @escaping (MKClusterAnnotation, [AnnotationItems.Element]) -> MapAnnotation? = { _, _ in nil },
@@ -238,6 +245,7 @@ extension Map {
             self.usesUserTrackingMode = false
             self._userTrackingMode = .constant(.none)
         }
+        self.legalPosition = legalPosition
         self.annotationItems = annotationItems
         self.annotationContent = annotationContent
         self.clusterAnnotation = clusterAnnotation
@@ -395,6 +403,7 @@ extension Map where AnnotationItems == [IdentifiableObject<MKAnnotation>] {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotations: [MKAnnotation] = [],
         @MapAnnotationBuilder annotationContent: @escaping (MKAnnotation) -> MapAnnotation = { annotation in
             assertionFailure("Please provide an `annotationContent` closure for the values in `annotations`.")
@@ -411,6 +420,7 @@ extension Map where AnnotationItems == [IdentifiableObject<MKAnnotation>] {
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotations.map(IdentifiableObject.init),
             annotationContent: { annotationContent($0.object) },
             clusterAnnotation: { annotation, _ in clusterAnnotation(annotation) },
@@ -426,6 +436,7 @@ extension Map where AnnotationItems == [IdentifiableObject<MKAnnotation>] {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotations: [MKAnnotation] = [],
         @MapAnnotationBuilder annotationContent: @escaping (MKAnnotation) -> MapAnnotation = { annotation in
             assertionFailure("Please provide an `annotationContent` closure for the values in `annotations`.")
@@ -442,6 +453,7 @@ extension Map where AnnotationItems == [IdentifiableObject<MKAnnotation>] {
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotations.map(IdentifiableObject.init),
             annotationContent: { annotationContent($0.object) },
             clusterAnnotation: { annotation, _ in clusterAnnotation(annotation) },
@@ -608,6 +620,7 @@ extension Map where OverlayItems == [IdentifiableObject<MKOverlay>] {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotationItems: AnnotationItems,
         @MapAnnotationBuilder annotationContent: @escaping (AnnotationItems.Element) -> MapAnnotation,
         @OptionalMapAnnotationBuilder clusterAnnotation: @escaping (MKClusterAnnotation, [AnnotationItems.Element]) -> MapAnnotation? = { _, _ in nil },
@@ -626,6 +639,7 @@ extension Map where OverlayItems == [IdentifiableObject<MKOverlay>] {
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotationItems,
             annotationContent: annotationContent,
             clusterAnnotation: clusterAnnotation,
@@ -641,6 +655,7 @@ extension Map where OverlayItems == [IdentifiableObject<MKOverlay>] {
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotationItems: AnnotationItems,
         @MapAnnotationBuilder annotationContent: @escaping (AnnotationItems.Element) -> MapAnnotation,
         @OptionalMapAnnotationBuilder clusterAnnotation: @escaping (MKClusterAnnotation, [AnnotationItems.Element]) -> MapAnnotation? = { _, _ in nil },
@@ -659,6 +674,7 @@ extension Map where OverlayItems == [IdentifiableObject<MKOverlay>] {
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotationItems,
             annotationContent: annotationContent,
             clusterAnnotation: clusterAnnotation,
@@ -837,6 +853,7 @@ extension Map
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotations: [MKAnnotation] = [],
         @MapAnnotationBuilder annotationContent: @escaping (MKAnnotation) -> MapAnnotation = { annotation in
             assertionFailure("Please provide an `annotationContent` closure for the values in `annotations`.")
@@ -858,6 +875,7 @@ extension Map
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotations.map(IdentifiableObject.init),
             annotationContent: { annotationContent($0.object) },
             clusterAnnotation: { annotation, _ in clusterAnnotation(annotation) },
@@ -873,6 +891,7 @@ extension Map
         informationVisibility: MapInformationVisibility = .default,
         interactionModes: MapInteractionModes = .all,
         userTrackingMode: Binding<UserTrackingMode>? = nil,
+        legalPosition: MapLegalPosition = .bottom,
         annotations: [MKAnnotation] = [],
         @MapAnnotationBuilder annotationContent: @escaping (MKAnnotation) -> MapAnnotation = { annotation in
             assertionFailure("Please provide an `annotationContent` closure for the values in `annotations`.")
@@ -894,6 +913,7 @@ extension Map
             informationVisibility: informationVisibility,
             interactionModes: interactionModes,
             userTrackingMode: userTrackingMode,
+            legalPosition: legalPosition,
             annotationItems: annotations.map(IdentifiableObject.init),
             annotationContent: { annotationContent($0.object) },
             clusterAnnotation: { annotation, _ in clusterAnnotation(annotation) },
